@@ -20,54 +20,32 @@
 
 ## 3.1 群与映射
 - 选取满足 DDH 假设的循环群 $G$，阶为 $q$，生成元为 $g$。
-- 定义哈希到群的映射：
-  $$
-  H(x) = g^{h(x)} \bmod p,\quad h(x) = \text{SHA256}(x) \bmod q
-  $$
+- 定义哈希到群的映射： $H(x) = g^{h(x)} \bmod p,\quad h(x) = \text{SHA256}(x) \bmod q$
 
 ## 3.2 Paillier 加密
-- 公私钥对 $(pk, sk)$，满足加法同态：
-  $$
-  Enc(m_1) \cdot Enc(m_2) = Enc(m_1 + m_2)
-  $$
+- 公私钥对 $(pk, sk)$，满足加法同态： $Enc(m_1) \cdot Enc(m_2) = Enc(m_1 + m_2)$
+
 ## 3.3 协议流程（Figure 2）
 
 1. **Round 1**（P1→P2）  
    P1 选择 $k_1 \in \mathbb{Z}_q^\ast$  
-   发送乱序集合：
-   $$
-   X_i = H(v_i)^{k_1}
-   $$
-
+   发送乱序集合： $X_i = H(v_i)^{k_1}$
+ 
 2. **Round 2**（P2→P1）  
    P2 选择 $k_2 \in \mathbb{Z}_q^\ast$  
-   计算：
-   $$
-   Z_i = X_i^{k_2} = H(v_i)^{k_1 k_2}
-   $$
-   对自身集合：
-   $$
-   Y_j = H(w_j)^{k_2},\quad C_j = Enc(t_j)
-   $$
+   计算： $Z_i = X_i^{k_2} = H(v_i)^{k_1 k_2}$
+   对自身集合： $Y_j = H(w_j)^{k_2},\quad C_j = Enc(t_j)$
    将乱序 $Z$、乱序 $(Y_j, C_j)$ 及 $pk$ 发送给 P1。
 
 3. **Round 3**（P1→P2）  
-   P1 计算：
-   $$
-   \tilde{Y}_j = Y_j^{k_1} = H(w_j)^{k_1 k_2}
-   $$
-   若 $\tilde{Y}_j \in Z$，则将 $C_j$ 纳入同态乘积：
-   $$
-   C^\star = \prod_{j:\tilde{Y}_j \in Z} C_j
-   $$
-   无交集时取 $Enc(0)$。  
+   P1 计算： $\tilde{Y}_j = Y_j^{k_1} = H(w_j)^{k_1 k_2}$
+   
+   若 Ỹⱼ ∈ Z，则将  $C_j$ 纳入同态乘积： $C^\star = \prod_{j:\tilde{Y}_j \in Z} C_j$ 
+   无交集时取 $Enc(0)$ 。  
    对 $C^\star$ 进行重随机化后发送给 P2。
 
-4. **输出结果**  
-   P2 解密：
-   $$
-   S = Dec(C^\star)
-   $$
+5. **输出结果**  
+   P2 解密： $S = Dec(C^\star)$
    P1 统计匹配次数得 $C$。
 
 # 4 实现思路
